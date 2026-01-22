@@ -1,0 +1,35 @@
+name: playev
+description: "Music Player."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_riverpod: ^2.3.6
+
+  supabase_flutter: ^2.9.1
+
+  just_audio: ^0.9.42
+  audio_service: ^0.18.16
+
+  cached_network_image: ^3.2.6
+  image_picker: ^0.8.7+5
+  file_picker: ^5.2.7
+  intl: ^0.18.1
+
+  shared_preferences: ^2.1.1
+
+  uuid: ^4.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
