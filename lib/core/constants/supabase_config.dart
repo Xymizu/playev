@@ -1,9 +1,5 @@
 class SupabaseConfig {
-  // Ganti dengan Project URL dari Supabase Dashboard
-  // Settings -> API -> Project URL
-  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
-
-  // Ganti dengan anon/public key dari Supabase Dashboard
-  // Settings -> API -> Project API keys -> anon public
-  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+  static const String supabaseUrl = 'https://hgzlawkjhisuqtifcbja.supabase.co';
+  static const String supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnemxhd2tqaGlzdXF0aWZjYmphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNjQ1MzEsImV4cCI6MjA4NDY0MDUzMX0.uOYLqw3h5QuiG8WbTLULsFG0RW5HJZkraAJ-hIodXz0';
 }

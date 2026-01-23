@@ -26,16 +26,40 @@ class AuthService {
         throw Exception('Registration failed');
       }
 
+      print('Register success, user ID: ${response.user!.id}');
+
+      // Wait a bit for trigger to execute
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Try to get user data
       final userData = await _supabase
           .from('users')
           .select()
           .eq('id', response.user!.id)
-          .single();
+          .maybeSingle();
+
+      if (userData == null) {
+        // Create user manually if trigger didn't work
+        print('User not in database, creating manually...');
+        await _supabase.from('users').insert({
+          'id': response.user!.id,
+          'email': email,
+          'name': name,
+        });
+
+        final newUserData = await _supabase
+            .from('users')
+            .select()
+            .eq('id', response.user!.id)
+            .single();
+
+        return UserModel.fromJson(newUserData);
+      }
 
       return UserModel.fromJson(userData);
     } catch (e) {
       print('Register error: $e');
-      return null;
+      rethrow;
     }
   }
 
@@ -53,16 +77,37 @@ class AuthService {
         throw Exception('Login failed');
       }
 
+      print('Login success, user ID: ${response.user!.id}');
+
       final userData = await _supabase
           .from('users')
           .select()
           .eq('id', response.user!.id)
-          .single();
+          .maybeSingle();
+
+      print('User data from DB: $userData');
+
+      if (userData == null) {
+        print('User not found in database, creating...');
+        await _supabase.from('users').insert({
+          'id': response.user!.id,
+          'email': response.user!.email,
+          'name': response.user!.email?.split('@')[0] ?? 'User',
+        });
+
+        final newUserData = await _supabase
+            .from('users')
+            .select()
+            .eq('id', response.user!.id)
+            .single();
+
+        return UserModel.fromJson(newUserData);
+      }
 
       return UserModel.fromJson(userData);
     } catch (e) {
       print('Login error: $e');
-      return null;
+      rethrow;
     }
   }
 

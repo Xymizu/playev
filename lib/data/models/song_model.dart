@@ -4,14 +4,13 @@ class SongModel {
   final String artist;
   final String? album;
   final String? genre;
-  final String? duration;
+  final int? duration;
   final String? coverUrl;
-  final String audioUrl; 
+  final String audioUrl;
   final String uploadedBy;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String status;
-
 
   SongModel({
     required this.id,
@@ -35,7 +34,7 @@ class SongModel {
       artist: json['artist'] as String,
       album: json['album'] as String?,
       genre: json['genre'] as String?,
-      duration: json['duration'] as String?,
+      duration: json['duration'] as int?,
       coverUrl: json['cover_url'] as String?,
       audioUrl: json['audio_url'] as String,
       uploadedBy: json['uploaded_by'] as String,
@@ -67,7 +66,7 @@ class SongModel {
     String? artist,
     String? album,
     String? genre,
-    String? duration,
+    int? duration,
     String? coverUrl,
     String? audioUrl,
     String? uploadedBy,

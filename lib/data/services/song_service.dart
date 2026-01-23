@@ -6,18 +6,26 @@ class SongService {
 
   Future<List<SongModel>> getApprovedSongs() async {
     try {
+      print('Fetching approved songs...');
       final response = await _supabase
           .from('songs')
           .select()
           .eq('status', 'approved')
           .order('created_at', ascending: false);
 
-      return (response as List)
-          .map((json) => SongModel.fromJson(json))
-          .toList();
+      print('Response: $response');
+      print('Response type: ${response.runtimeType}');
+
+      final songs = (response as List).map((json) {
+        print('Parsing song: $json');
+        return SongModel.fromJson(json);
+      }).toList();
+
+      print('Total songs: ${songs.length}');
+      return songs;
     } catch (e) {
       print('Get approved songs error: $e');
-      return [];
+      rethrow;
     }
   }
 
