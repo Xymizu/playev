@@ -16,9 +16,7 @@ class ProfileScreen extends ConsumerWidget {
     final favoritesAsync = ref.watch(userFavoritesProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(title: const Text('Profile')),
       body: Column(
         children: [
           Padding(

@@ -43,15 +43,15 @@ class AdminScreen extends ConsumerWidget {
               Text(
                 'Welcome, Admin',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Here\'s what\'s happening with your music platform',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
               ),
               const SizedBox(height: 24),
 
@@ -66,7 +66,11 @@ class AdminScreen extends ConsumerWidget {
                 error: (err, stack) => Center(
                   child: Column(
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
                       const SizedBox(height: 16),
                       Text('Error: $err'),
                       const SizedBox(height: 16),
@@ -78,8 +82,12 @@ class AdminScreen extends ConsumerWidget {
                   ),
                 ),
                 data: (songs) {
-                  final approved = songs.where((s) => s.status == 'approved').length;
-                  final rejected = songs.where((s) => s.status == 'rejected').length;
+                  final approved = songs
+                      .where((s) => s.status == 'approved')
+                      .length;
+                  final rejected = songs
+                      .where((s) => s.status == 'rejected')
+                      .length;
                   final total = songs.length;
 
                   return Column(
@@ -106,7 +114,9 @@ class AdminScreen extends ConsumerWidget {
                                 value: pending.length.toString(),
                                 subtitle: 'Needs attention',
                                 color: Colors.orange,
-                                trend: pending.isNotEmpty ? '+${pending.length}' : null,
+                                trend: pending.isNotEmpty
+                                    ? '+${pending.length}'
+                                    : null,
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -135,7 +145,7 @@ class AdminScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Secondary stats row
                       Row(
                         children: [
@@ -161,7 +171,7 @@ class AdminScreen extends ConsumerWidget {
                             child: _SmallStatCard(
                               icon: Icons.trending_up,
                               title: 'Approval Rate',
-                              value: total > 0 
+                              value: total > 0
                                   ? '${((approved / total) * 100).toStringAsFixed(0)}%'
                                   : '0%',
                               color: Colors.purple,
@@ -169,9 +179,9 @@ class AdminScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Quick Actions
                       _SectionHeader(title: 'Quick Actions'),
                       const SizedBox(height: 12),
@@ -265,7 +275,10 @@ class _BigStatCard extends StatelessWidget {
                   ),
                   if (trend != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -300,10 +313,7 @@ class _BigStatCard extends StatelessWidget {
               ),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -347,10 +357,7 @@ class _SmallStatCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 11, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
           ],
@@ -388,10 +395,7 @@ class _ActionCard extends StatelessWidget {
           ),
           child: Icon(icon, color: color, size: 24),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
@@ -410,10 +414,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
     );
   }
 }
@@ -459,11 +460,18 @@ class ReviewScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 64,
+                    color: Colors.green,
+                  ),
                   SizedBox(height: 16),
                   Text('No pending songs', style: TextStyle(fontSize: 18)),
                   SizedBox(height: 8),
-                  Text('All caught up! 🎉', style: TextStyle(color: Colors.grey)),
+                  Text(
+                    'All caught up! 🎉',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ],
               ),
             );
@@ -536,7 +544,9 @@ class ManageSongsScreen extends ConsumerWidget {
                     if (value == 'delete') {
                       // TODO: Implement delete
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Delete feature coming soon')),
+                        const SnackBar(
+                          content: Text('Delete feature coming soon'),
+                        ),
                       );
                     }
                   },
@@ -829,17 +839,26 @@ class PendingSongTile extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () async {
                 final audioService = AudioPlayerService();
-                if (audioService.isPlaying && 
-                    audioService.player?.audioSource?.toString().contains(song.audioUrl) == true) {
+                if (audioService.isPlaying &&
+                    audioService.player?.audioSource?.toString().contains(
+                          song.audioUrl,
+                        ) ==
+                        true) {
                   await audioService.pause();
                 } else {
                   await audioService.play(song.audioUrl, song: song);
                 }
               },
               icon: const Icon(Icons.play_arrow, size: 16),
-              label: const Text('Preview Audio', style: TextStyle(fontSize: 12)),
+              label: const Text(
+                'Preview Audio',
+                style: TextStyle(fontSize: 12),
+              ),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 minimumSize: Size.zero,
               ),
             ),
