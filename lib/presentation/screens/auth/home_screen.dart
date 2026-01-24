@@ -5,6 +5,7 @@ import '../../widgets/song_tile.dart';
 import '../../widgets/mini_player.dart';
 import '../search/search_screen.dart';
 import '../profile/profile_screen.dart';
+import '../upload/upload_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -41,7 +42,10 @@ class HomeScreen extends ConsumerWidget {
                 return ListView.builder(
                   itemCount: songs.length,
                   itemBuilder: (context, index) {
-                    return SongTile(song: songs[index]);
+                    return SongTile(
+                      song: songs[index],
+                      allSongs: songs, // Pass all songs untuk queue
+                    );
                   },
                 );
               },
@@ -49,6 +53,15 @@ class HomeScreen extends ConsumerWidget {
           ),
           const MiniPlayer(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const UploadScreen()),
+          );
+        },
+        child: const Icon(Icons.upload),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,

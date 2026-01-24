@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/songs_provider.dart';
+import '../../providers/audio_provider.dart';
 import '../screens/player/full_player_screen.dart';
 
 class MiniPlayer extends ConsumerWidget {
@@ -9,6 +10,8 @@ class MiniPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentSong = ref.watch(currentSongProvider);
+    final audioService = ref.watch(audioServiceProvider);
+    final isPlayingAsync = ref.watch(isPlayingProvider);
 
     if (currentSong == null) return const SizedBox.shrink();
 
@@ -54,7 +57,27 @@ class MiniPlayer extends ConsumerWidget {
                 ],
               ),
             ),
-            IconButton(icon: const Icon(Icons.play_arrow), onPressed: () {}),
+            isPlayingAsync.when(
+              data: (isPlaying) => IconButton(
+                icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                onPressed: () async {
+                  if (isPlaying) {
+                    await audioService.pause();
+                  } else {
+                    if (!audioService.hasAudioSource) {
+                      await audioService.play(
+                        currentSong.audioUrl,
+                        song: currentSong,
+                      );
+                    } else {
+                      await audioService.resume();
+                    }
+                  }
+                },
+              ),
+              loading: () => const CircularProgressIndicator(),
+              error: (_, __) => const Icon(Icons.error),
+            ),
           ],
         ),
       ),

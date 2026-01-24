@@ -3,14 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/supabase_config.dart';
 import 'presentation/screens/auth/login_screen.dart';
+import 'data/services/audio_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: SupabaseConfig.supabaseUrl,
-    anonKey: SupabaseConfig.supabaseAnonKey,
-  );
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+    print('✅ Supabase initialized');
+  } catch (e) {
+    print('❌ Supabase init error: $e');
+  }
+
+  // Initialize audio service in background (non-blocking)
+  AudioPlayerService()
+      .init()
+      .then((_) {
+        print('✅ Audio service initialized');
+      })
+      .catchError((e) {
+        print('❌ Audio service init error: $e');
+      });
 
   runApp(const ProviderScope(child: MyApp()));
 }

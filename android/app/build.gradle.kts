@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.playev"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion // Commented out - not needed
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

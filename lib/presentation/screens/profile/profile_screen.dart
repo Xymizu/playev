@@ -4,6 +4,8 @@ import '../../../providers/auth_providers.dart';
 import '../../../providers/favorites_provider.dart';
 import '../../widgets/song_tile.dart';
 import '../auth/login_screen.dart';
+import '../admin/admin_screen.dart';
+import 'upload_history_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -16,22 +18,6 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authServiceProvider).logout();
-              ref.read(currentUserProvider.notifier).state = null;
-              if (context.mounted) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -59,6 +45,47 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           const Divider(),
+          // My Uploads Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Card(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              child: ListTile(
+                leading: const Icon(Icons.upload_file),
+                title: const Text('My Uploads'),
+                subtitle: const Text('Check your upload status'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const UploadHistoryScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          // Admin Panel Button (only for admins)
+          if (user?.role == 'admin')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Card(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: ListTile(
+                  leading: const Icon(Icons.admin_panel_settings),
+                  title: const Text('Admin Panel'),
+                  subtitle: const Text('Review pending songs'),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AdminScreen()),
+                    );
+                  },
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
@@ -81,6 +108,29 @@ class ProfileScreen extends ConsumerWidget {
                   },
                 );
               },
+            ),
+          ),
+          // Logout button at bottom
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: FilledButton.icon(
+              onPressed: () async {
+                await ref.read(authServiceProvider).logout();
+                ref.read(currentUserProvider.notifier).state = null;
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
+              },
+              icon: const Icon(Icons.logout),
+              label: const Text('Logout'),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red,
+                minimumSize: const Size(double.infinity, 50),
+              ),
             ),
           ),
         ],

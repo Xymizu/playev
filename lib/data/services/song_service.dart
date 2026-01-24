@@ -29,6 +29,23 @@ class SongService {
     }
   }
 
+  // Get all songs (for admin)
+  Future<List<SongModel>> getAllSongs() async {
+    try {
+      final response = await _supabase
+          .from('songs')
+          .select()
+          .order('created_at', ascending: false);
+
+      return (response as List)
+          .map((json) => SongModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('Get all songs error: $e');
+      rethrow;
+    }
+  }
+
   Future<SongModel?> getSongById(String songId) async {
     try {
       final response = await _supabase

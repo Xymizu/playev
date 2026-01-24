@@ -9,6 +9,12 @@ final approvedSongsProvider = FutureProvider<List<SongModel>>((ref) async {
   return await songService.getApprovedSongs();
 });
 
+// Provider for all songs (for admin stats)
+final allSongsProvider = FutureProvider<List<SongModel>>((ref) async {
+  final songService = ref.watch(songServiceProvider);
+  return await songService.getAllSongs();
+});
+
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 final searchResultsProvider = FutureProvider<List<SongModel>>((ref) async {

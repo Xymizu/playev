@@ -18,8 +18,8 @@ dependencies:
   audio_service: ^0.18.16
 
   cached_network_image: ^3.2.6
-  image_picker: ^0.8.7+5
-  file_picker: ^5.2.7
+  image_picker: ^1.0.7
+  file_picker: ^8.1.6
   intl: ^0.18.1
 
   shared_preferences: ^2.1.1

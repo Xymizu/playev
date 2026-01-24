@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/song_model.dart';
 import '../../providers/songs_provider.dart';
+import '../../providers/queue_provider.dart';
 import '../screens/player/full_player_screen.dart';
 
 class SongTile extends ConsumerWidget {
   final SongModel song;
+  final List<SongModel>? allSongs; // Optional: untuk set queue
 
-  const SongTile({super.key, required this.song});
+  const SongTile({super.key, required this.song, this.allSongs});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,6 +27,15 @@ class SongTile extends ConsumerWidget {
       trailing: Text(_formatDuration(song.duration ?? 0)),
       onTap: () {
         ref.read(currentSongProvider.notifier).state = song;
+
+        // Set queue jika ada list songs
+        if (allSongs != null) {
+          final songIndex = allSongs!.indexOf(song);
+          ref
+              .read(queueProvider.notifier)
+              .setQueue(allSongs!, startIndex: songIndex >= 0 ? songIndex : 0);
+        }
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const FullPlayerScreen()),

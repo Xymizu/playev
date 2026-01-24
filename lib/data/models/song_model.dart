@@ -11,6 +11,7 @@ class SongModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String status;
+  final String? rejectionReason;
 
   SongModel({
     required this.id,
@@ -25,6 +26,7 @@ class SongModel {
     required this.createdAt,
     required this.updatedAt,
     required this.status,
+    this.rejectionReason,
   });
 
   factory SongModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class SongModel {
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       status: json['status'] as String,
+      rejectionReason: json['rejection_reason'] as String?,
     );
   }
   Map<String, dynamic> toJson() {
@@ -57,6 +60,7 @@ class SongModel {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'status': status,
+      'rejection_reason': rejectionReason,
     };
   }
 
@@ -73,6 +77,7 @@ class SongModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? status,
+    String? rejectionReason,
   }) {
     return SongModel(
       id: id ?? this.id,
@@ -87,6 +92,7 @@ class SongModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       status: status ?? this.status,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
     );
   }
 }
