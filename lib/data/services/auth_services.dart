@@ -28,10 +28,10 @@ class AuthService {
 
       print('Register success, user ID: ${response.user!.id}');
 
-      // Wait a bit for trigger to execute
+      // Wait for trigger
       await Future.delayed(const Duration(milliseconds: 500));
 
-      // Try to get user data
+      // Get user data
       final userData = await _supabase
           .from('users')
           .select()

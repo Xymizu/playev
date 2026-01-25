@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_providers.dart';
 import 'home_screen.dart';
+import '../admin/admin_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  final bool isLogin;
+
+  const LoginScreen({super.key, this.isLogin = true});
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -14,8 +17,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
-  bool _isLogin = true;
+  late bool _isLogin;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLogin = widget.isLogin;
+  }
 
   @override
   void dispose() {
@@ -29,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      ).showSnackBar(const SnackBar(content: Text('Fill all fields')));
       return;
     }
 
@@ -46,9 +55,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (user != null) {
           ref.read(currentUserProvider.notifier).state = user;
           if (mounted) {
+            final targetScreen = user.role == 'admin'
+                ? const AdminScreen()
+                : const HomeScreen();
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(builder: (_) => targetScreen),
             );
           }
         }
@@ -61,9 +73,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (user != null) {
           ref.read(currentUserProvider.notifier).state = user;
           if (mounted) {
+            final targetScreen = user.role == 'admin'
+                ? const AdminScreen()
+                : const HomeScreen();
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(builder: (_) => targetScreen),
             );
           }
         }

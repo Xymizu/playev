@@ -195,7 +195,7 @@ class _StatusSummaryCard extends StatelessWidget {
   }
 }
 
-class UploadTile extends StatelessWidget {
+class UploadTile extends ConsumerWidget {
   final SongModel song;
 
   const UploadTile({super.key, required this.song});
@@ -222,6 +222,121 @@ class UploadTile extends StatelessWidget {
       default:
         return Icons.pending;
     }
+  }
+
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Song'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Are you sure you want to delete this song?'),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  if (song.coverUrl != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Image.network(
+                        song.coverUrl!,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  else
+                    const Icon(Icons.music_note, size: 40),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          song.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          song.artist,
+                          style: const TextStyle(fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning_amber, size: 16, color: Colors.red),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'This action cannot be undone',
+                      style: TextStyle(fontSize: 12, color: Colors.red[800]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+
+              try {
+                final uploadService = ref.read(uploadServiceProvider);
+                await uploadService.deleteSong(song.id);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Song deleted'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  // Refresh the list
+                  ref.invalidate(myUploadsProvider);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
+              }
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showRejectionReason(BuildContext context) {
@@ -341,7 +456,7 @@ class UploadTile extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final statusColor = _getStatusColor();
 
     return Card(
@@ -436,14 +551,12 @@ class UploadTile extends StatelessWidget {
                 ),
               ),
 
-              // Status icon
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(_getStatusIcon(), color: statusColor, size: 24),
+              // Delete button
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                color: Colors.red,
+                onPressed: () => _showDeleteConfirmation(context, ref),
+                tooltip: 'Delete',
               ),
             ],
           ),

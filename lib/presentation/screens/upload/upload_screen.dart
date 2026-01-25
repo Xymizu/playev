@@ -35,12 +35,12 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
 
   Future<void> _pickAudioFile() async {
     try {
-      print('🎵 Picking audio file...');
+      print('Picking audio file');
       final result = await FilePicker.platform.pickFiles(type: FileType.audio);
 
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
-        print('✅ Audio file selected: ${file.path}');
+        print('Audio file selected: ${file.path}');
         setState(() => _audioFile = file);
 
         // Get duration
@@ -50,16 +50,16 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
           final duration = player.duration;
           if (duration != null) {
             setState(() => _audioDuration = duration.inSeconds);
-            print('⏱️ Duration: ${duration.inSeconds} seconds');
+            print('Duration: ${duration.inSeconds} seconds');
           }
         } finally {
           await player.dispose();
         }
       } else {
-        print('❌ No audio file selected');
+        print('No audio file selected');
       }
     } catch (e) {
-      print('❌ Error picking audio: $e');
+      print('Error picking audio: $e');
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -70,18 +70,18 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
 
   Future<void> _pickCoverImage() async {
     try {
-      print('🖼️ Picking cover image...');
+      print('Picking cover image');
       final picker = ImagePicker();
       final result = await picker.pickImage(source: ImageSource.gallery);
 
       if (result != null) {
-        print('✅ Image selected: ${result.path}');
+        print('Image selected: ${result.path}');
         setState(() => _coverFile = File(result.path));
       } else {
-        print('❌ No image selected');
+        print('No image selected');
       }
     } catch (e) {
-      print('❌ Error picking image: $e');
+      print('Error picking image: $e');
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -94,7 +94,7 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_audioFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an audio file')),
+        const SnackBar(content: Text('Select an audio file first')),
       );
       return;
     }
@@ -102,22 +102,22 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
     setState(() => _isUploading = true);
 
     try {
-      print('🚀 Starting upload process...');
+      print('Starting upload process');
 
       // Upload files
-      print('⬆️ Uploading audio file...');
+      print('Uploading audio file');
       final audioUrl = await _uploadService.uploadAudioFile(_audioFile!);
-      print('✅ Audio uploaded: $audioUrl');
+      print('Audio uploaded: $audioUrl');
 
       String? coverUrl;
       if (_coverFile != null) {
-        print('⬆️ Uploading cover image...');
+        print('Uploading cover image');
         coverUrl = await _uploadService.uploadCoverImage(_coverFile);
-        print('✅ Cover uploaded: $coverUrl');
+        print('Cover uploaded: $coverUrl');
       }
 
       // Submit song
-      print('⬆️ Submitting song metadata...');
+      print('Submitting song metadata');
       await _uploadService.submitSong(
         title: _titleController.text.trim(),
         artist: _artistController.text.trim(),

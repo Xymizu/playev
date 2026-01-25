@@ -31,11 +31,11 @@ class UploadService {
       return url;
     } catch (e) {
       print('❌ Audio upload error: $e');
-      throw Exception('Failed to upload audio: $e');
+      throw Exception('Upload audio failed: $e');
     }
   }
 
-  // Upload cover image ke Supabase Storage
+  // Upload cover image
   Future<String?> uploadCoverImage(File? file) async {
     if (file == null) return null;
 
@@ -60,8 +60,8 @@ class UploadService {
       print('✅ Cover uploaded: $url');
       return url;
     } catch (e) {
-      print('❌ Cover upload error: $e');
-      throw Exception('Failed to upload cover: $e');
+      print('Cover upload error: $e');
+      throw Exception('Upload cover failed: $e');
     }
   }
 
@@ -75,13 +75,13 @@ class UploadService {
     required int duration,
   }) async {
     try {
-      print('📝 Submitting song to database...');
+      print('Submitting song to database');
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw Exception('User not logged in');
 
-      print('👤 User ID: $userId');
-      print('🎵 Title: $title');
-      print('🎤 Artist: $artist');
+      print('User ID: $userId');
+      print('Title: $title');
+      print('Artist: $artist');
 
       final data = await _supabase
           .from('songs')
@@ -93,7 +93,7 @@ class UploadService {
             'cover_url': coverUrl,
             'duration': duration,
             'uploaded_by': userId,
-            'status': 'pending', // Admin harus approve dulu
+            'status': 'pending',
           })
           .select()
           .single();
@@ -102,7 +102,7 @@ class UploadService {
       return SongModel.fromJson(data);
     } catch (e) {
       print('❌ Song submission error: $e');
-      throw Exception('Failed to submit song: $e');
+      throw Exception('Submit song failed: $e');
     }
   }
 
@@ -114,7 +114,7 @@ class UploadService {
           .update({'status': 'approved', 'rejection_reason': null})
           .eq('id', songId);
     } catch (e) {
-      throw Exception('Failed to approve song: $e');
+      throw Exception('Approve failed: $e');
     }
   }
 
@@ -126,7 +126,7 @@ class UploadService {
           .update({'status': 'rejected', 'rejection_reason': reason})
           .eq('id', songId);
     } catch (e) {
-      throw Exception('Failed to reject song: $e');
+      throw Exception('Reject failed: $e');
     }
   }
 
@@ -143,7 +143,7 @@ class UploadService {
           .map((json) => SongModel.fromJson(json))
           .toList();
     } catch (e) {
-      throw Exception('Failed to get pending songs: $e');
+      throw Exception('Get pending failed: $e');
     }
   }
 
@@ -163,7 +163,27 @@ class UploadService {
           .map((json) => SongModel.fromJson(json))
           .toList();
     } catch (e) {
-      throw Exception('Failed to get uploads: $e');
+      throw Exception('Get uploads failed: $e');
+    }
+  }
+
+  // User: Delete own song
+  Future<void> deleteSong(String songId) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) throw Exception('User not logged in');
+
+      // Delete from database (ownership checked by RLS policy)
+      await _supabase
+          .from('songs')
+          .delete()
+          .eq('id', songId)
+          .eq('uploaded_by', userId);
+
+      print('Song deleted successfully');
+    } catch (e) {
+      print('Delete song error: $e');
+      throw Exception('Delete failed: $e');
     }
   }
 }

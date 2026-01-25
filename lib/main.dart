@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/supabase_config.dart';
-import 'presentation/screens/auth/login_screen.dart';
+import 'presentation/screens/auth/welcome_screen.dart';
 import 'data/services/audio_service.dart';
 
 void main() async {
@@ -13,19 +13,19 @@ void main() async {
       url: SupabaseConfig.supabaseUrl,
       anonKey: SupabaseConfig.supabaseAnonKey,
     );
-    print('✅ Supabase initialized');
+    print('Supabase initialized');
   } catch (e) {
-    print('❌ Supabase init error: $e');
+    print('Supabase init error: $e');
   }
 
-  // Initialize audio service in background (non-blocking)
+  // Init audio in background
   AudioPlayerService()
       .init()
       .then((_) {
-        print('✅ Audio service initialized');
+        print('Audio service initialized');
       })
       .catchError((e) {
-        print('❌ Audio service init error: $e');
+        print('Audio service init error: $e');
       });
 
   runApp(const ProviderScope(child: MyApp()));
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }

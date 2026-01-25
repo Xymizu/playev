@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_providers.dart';
 import '../../../providers/favorites_provider.dart';
+import '../../../providers/upload_provider.dart';
+import '../../../providers/repost_provider.dart';
 import '../../widgets/song_tile.dart';
 import '../auth/login_screen.dart';
 import '../admin/admin_screen.dart';
 import 'upload_history_screen.dart';
+import 'recently_played_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -14,6 +17,8 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final favoritesAsync = ref.watch(userFavoritesProvider);
+    final uploadsAsync = ref.watch(myUploadsProvider);
+    final repostsAsync = ref.watch(userRepostsProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -39,10 +44,59 @@ class ProfileScreen extends ConsumerWidget {
                   user?.email ?? '',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
+                const SizedBox(height: 16),
+                // Stats row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _StatCard(
+                      label: 'Uploads',
+                      value: uploadsAsync.maybeWhen(
+                        data: (songs) => songs.length.toString(),
+                        orElse: () => '-',
+                      ),
+                    ),
+                    _StatCard(
+                      label: 'Favorites',
+                      value: favoritesAsync.maybeWhen(
+                        data: (songs) => songs.length.toString(),
+                        orElse: () => '-',
+                      ),
+                    ),
+                    _StatCard(
+                      label: 'Reposts',
+                      value: repostsAsync.maybeWhen(
+                        data: (songs) => songs.length.toString(),
+                        orElse: () => '-',
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
           const Divider(),
+          // Recently Played Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Card(
+              color: Theme.of(context).colorScheme.tertiaryContainer,
+              child: ListTile(
+                leading: const Icon(Icons.history),
+                title: const Text('Recently Played'),
+                subtitle: const Text('Your listening history'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RecentlyPlayedScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
           // My Uploads Button
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -102,7 +156,7 @@ class ProfileScreen extends ConsumerWidget {
                 return ListView.builder(
                   itemCount: songs.length,
                   itemBuilder: (context, index) {
-                    return SongTile(song: songs[index]);
+                    return SongTile(song: songs[index], allSongs: songs);
                   },
                 );
               },
@@ -133,6 +187,28 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _StatCard({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
+      ],
     );
   }
 }

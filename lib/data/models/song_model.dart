@@ -12,6 +12,9 @@ class SongModel {
   final DateTime updatedAt;
   final String status;
   final String? rejectionReason;
+  final int playCount;
+  final int likesCount;
+  final bool downloadEnabled;
 
   SongModel({
     required this.id,
@@ -27,6 +30,9 @@ class SongModel {
     required this.updatedAt,
     required this.status,
     this.rejectionReason,
+    this.playCount = 0,
+    this.likesCount = 0,
+    this.downloadEnabled = false,
   });
 
   factory SongModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +50,9 @@ class SongModel {
       updatedAt: DateTime.parse(json['updated_at'] as String),
       status: json['status'] as String,
       rejectionReason: json['rejection_reason'] as String?,
+      playCount: json['play_count'] as int? ?? 0,
+      likesCount: json['likes_count'] as int? ?? 0,
+      downloadEnabled: json['download_enabled'] as bool? ?? false,
     );
   }
   Map<String, dynamic> toJson() {
@@ -61,6 +70,9 @@ class SongModel {
       'updated_at': updatedAt.toIso8601String(),
       'status': status,
       'rejection_reason': rejectionReason,
+      'play_count': playCount,
+      'likes_count': likesCount,
+      'download_enabled': downloadEnabled,
     };
   }
 
@@ -78,6 +90,9 @@ class SongModel {
     DateTime? updatedAt,
     String? status,
     String? rejectionReason,
+    int? playCount,
+    int? likesCount,
+    bool? downloadEnabled,
   }) {
     return SongModel(
       id: id ?? this.id,
@@ -93,6 +108,9 @@ class SongModel {
       updatedAt: updatedAt ?? this.updatedAt,
       status: status ?? this.status,
       rejectionReason: rejectionReason ?? this.rejectionReason,
+      playCount: playCount ?? this.playCount,
+      likesCount: likesCount ?? this.likesCount,
+      downloadEnabled: downloadEnabled ?? this.downloadEnabled,
     );
   }
 }

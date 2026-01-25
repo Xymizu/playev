@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/upload_provider.dart';
-import '../../../providers/auth_providers.dart';
 import '../../../providers/songs_provider.dart';
-import '../../../providers/favorites_provider.dart';
 import '../../../data/models/song_model.dart';
 import '../../../data/services/audio_service.dart';
 
@@ -567,11 +565,11 @@ class PendingSongTile extends ConsumerWidget {
 
   // Template pesan penolakan
   static const rejectionTemplates = [
-    'Audio quality is too low. Please upload higher quality audio.',
-    'Copyright issue detected. Please only upload original content or content you have rights to.',
-    'Inappropriate content. Please follow our community guidelines.',
-    'Incomplete metadata. Please provide complete song information.',
-    'File format not supported. Please upload MP3 format.',
+    'Audio quality too low',
+    'Copyright issue - upload original content only',
+    'Inappropriate content',
+    'Incomplete metadata',
+    'Format not supported - use MP3',
     'Audio file is corrupted or unplayable.',
   ];
 
@@ -641,7 +639,7 @@ class PendingSongTile extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Toggle antara template dan custom
+                  // Template or custom
                   SegmentedButton<bool>(
                     segments: const [
                       ButtonSegment(
@@ -666,7 +664,7 @@ class PendingSongTile extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  // Template dropdown atau custom text field
+                  // Dropdown or text field
                   if (!useCustomMessage)
                     DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
@@ -717,9 +715,7 @@ class PendingSongTile extends ConsumerWidget {
 
                 if (reason == null || reason.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please provide a rejection reason'),
-                    ),
+                    const SnackBar(content: Text('Enter rejection reason')),
                   );
                   return;
                 }
@@ -880,11 +876,11 @@ class PendingSongTile extends ConsumerWidget {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Song approved! ✅'),
+                            content: Text('Song approved'),
                             backgroundColor: Colors.green,
                           ),
                         );
-                        // Refresh all relevant providers for real-time update
+                        // Refresh providers
                         ref.invalidate(pendingSongsProvider);
                         ref.invalidate(approvedSongsProvider);
                         ref.invalidate(allSongsProvider);
